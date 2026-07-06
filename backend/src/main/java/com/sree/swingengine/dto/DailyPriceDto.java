@@ -12,15 +12,15 @@ public class DailyPriceDto {
 
     private String symbol;
 
-    private LocalDate tradeDate;
+    private LocalDate tradingDate;
 
-    private BigDecimal openPrice;
+    private BigDecimal open;
 
-    private BigDecimal highPrice;
+    private BigDecimal high;
 
-    private BigDecimal lowPrice;
+    private BigDecimal low;
 
-    private BigDecimal closePrice;
+    private BigDecimal close;
 
     private Long volume;
 

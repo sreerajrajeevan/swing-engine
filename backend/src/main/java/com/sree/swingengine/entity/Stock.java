@@ -40,4 +40,6 @@ public class Stock extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+    @Column(name = "symbol_token")
+    private String symbolToken;
 }

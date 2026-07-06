@@ -5,13 +5,12 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(
         name = "daily_price",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"stock_id", "trade_date"})
+                @UniqueConstraint(columnNames = {"stock_id", "trading_date"})
         }
 )
 @Getter
@@ -19,7 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DailyPrice extends BaseEntity{
+public class DailyPrice extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,28 +28,21 @@ public class DailyPrice extends BaseEntity{
     @JoinColumn(name = "stock_id", nullable = false)
     private Stock stock;
 
-    @Column(name = "trade_date", nullable = false)
-    private LocalDate tradeDate;
+    @Column(name = "trading_date", nullable = false)
+    private LocalDate tradingDate;
 
     @Column(nullable = false, precision = 19, scale = 4)
-    private BigDecimal openPrice;
+    private BigDecimal open;
 
     @Column(nullable = false, precision = 19, scale = 4)
-    private BigDecimal highPrice;
+    private BigDecimal high;
 
     @Column(nullable = false, precision = 19, scale = 4)
-    private BigDecimal lowPrice;
+    private BigDecimal low;
 
     @Column(nullable = false, precision = 19, scale = 4)
-    private BigDecimal closePrice;
+    private BigDecimal close;
 
     @Column(nullable = false)
     private Long volume;
-
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
 }
