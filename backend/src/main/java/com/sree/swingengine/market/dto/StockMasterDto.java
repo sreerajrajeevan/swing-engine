@@ -1,4 +1,4 @@
-package com.sree.swingengine.dto;
+package com.sree.swingengine.market.dto;
 
 import lombok.Builder;
 import lombok.Data;

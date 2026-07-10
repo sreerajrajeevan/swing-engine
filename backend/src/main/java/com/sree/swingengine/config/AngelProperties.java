@@ -15,7 +15,7 @@ public class AngelProperties {
     private String baseUrl;
     private String loginEndpoint;
     private String historicalCandleEndpoint;
-
+    private String instrumentMasterEndpoint;
     private String apiKey;
     private String clientCode;
     private String pin;

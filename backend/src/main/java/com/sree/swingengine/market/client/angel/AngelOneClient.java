@@ -1,12 +1,12 @@
-package com.sree.swingengine.marketdata.client.angel;
+package com.sree.swingengine.market.client.angel;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sree.swingengine.config.AngelProperties;
-import com.sree.swingengine.marketdata.client.angel.dto.*;
+import com.sree.swingengine.market.client.angel.dto.*;
+import com.sree.swingengine.market.session.AngelSessionManager;
 import com.sree.swingengine.util.NetworkUtil;
-import com.sree.swingengine.util.TotpGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -24,29 +24,8 @@ public class AngelOneClient {
     private final RestClient restClient;
     private final AngelProperties properties;
     private final ObjectMapper objectMapper;
+    private final AngelSessionManager angelSessionManager;
 
-    public AngelLoginResponse login() {
-
-        AngelLoginRequest request = AngelLoginRequest.builder()
-                .clientcode(properties.getClientCode())
-                .password(properties.getPin())
-                .totp(String.valueOf(TotpGenerator.generate(properties.getTotpSecret())))
-                .build();
-
-        return restClient.post()
-                .uri(properties.getBaseUrl() + properties.getLoginEndpoint())
-                .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
-                .header("X-UserType", "USER")
-                .header("X-SourceID", "WEB")
-                .header("X-ClientLocalIP", NetworkUtil.getLocalIp())
-                .header("X-ClientPublicIP", properties.getClientPublicIp())
-                .header("X-MACAddress", NetworkUtil.getMacAddress())
-                .header("X-PrivateKey", properties.getApiKey())
-                .body(request)
-                .retrieve()
-                .body(AngelLoginResponse.class);
-    }
     public List<AngelInstrumentDto> getInstruments() throws JsonProcessingException {
 
         String json = downloadInstrumentMaster();
@@ -59,8 +38,7 @@ public class AngelOneClient {
     public String downloadInstrumentMaster() {
 
         return restClient.get()
-                .uri("https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json")
-                .retrieve()
+                .uri(properties.getInstrumentMasterEndpoint()).retrieve()
                 .body(String.class);
     }
     public AngelHistoricalCandleResponse downloadHistoricalCandles(
@@ -68,9 +46,7 @@ public class AngelOneClient {
             LocalDate from,
             LocalDate to) {
 
-        AngelLoginResponse loginResponse = login();
-
-        String jwt = loginResponse.getData().getJwtToken();
+        String jwt = angelSessionManager.getJwtToken();
 
         AngelHistoricalCandleRequest request =
                 AngelHistoricalCandleRequest.builder()

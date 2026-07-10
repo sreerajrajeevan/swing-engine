@@ -1,0 +1,45 @@
+package com.sree.swingengine.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Entity
+@Table(
+        name = "daily_indicator",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"stock_id", "trading_date"})
+        }
+)
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class DailyIndicator extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "stock_id", nullable = false)
+    private Stock stock;
+
+    @Column(name = "trading_date", nullable = false)
+    private LocalDate tradingDate;
+
+    @Column(precision = 19, scale = 4)
+    private BigDecimal ema20;
+
+    @Column(precision = 19, scale = 4)
+    private BigDecimal ema50;
+
+    @Column(precision = 19, scale = 4)
+    private BigDecimal ema200;
+
+    @Column(precision = 10, scale = 4)
+    private BigDecimal rsi;
+}

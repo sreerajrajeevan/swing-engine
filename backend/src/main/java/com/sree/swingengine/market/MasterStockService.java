@@ -1,8 +1,8 @@
-package com.sree.swingengine.marketdata;
+package com.sree.swingengine.market;
 
-import com.sree.swingengine.dto.StockMasterDto;
+import com.sree.swingengine.market.dto.StockMasterDto;
 import com.sree.swingengine.entity.Stock;
-import com.sree.swingengine.marketdata.client.MarketDataClient;
+import com.sree.swingengine.market.client.MarketDataClient;
 import com.sree.swingengine.repository.StockRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,11 +1,11 @@
-package com.sree.swingengine.marketdata;
+package com.sree.swingengine.market;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sree.swingengine.entity.Stock;
-import com.sree.swingengine.marketdata.client.angel.AngelOneClient;
-import com.sree.swingengine.marketdata.client.angel.dto.AngelInstrumentDto;
+import com.sree.swingengine.market.client.angel.AngelOneClient;
+import com.sree.swingengine.market.client.angel.dto.AngelInstrumentDto;
 import com.sree.swingengine.repository.StockRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

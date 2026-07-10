@@ -1,7 +1,7 @@
-package com.sree.swingengine.marketdata.client;
+package com.sree.swingengine.market.client;
 
 import com.sree.swingengine.config.MarketDataProperties;
-import com.sree.swingengine.dto.StockMasterDto;
+import com.sree.swingengine.market.dto.StockMasterDto;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;

@@ -1,4 +1,4 @@
-package com.sree.swingengine.marketdata.mapper;
+package com.sree.swingengine.market.mapper;
 
 import com.sree.swingengine.entity.DailyPrice;
 import com.sree.swingengine.entity.Stock;

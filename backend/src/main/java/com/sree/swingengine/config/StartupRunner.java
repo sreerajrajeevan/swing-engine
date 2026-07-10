@@ -1,19 +1,15 @@
 package com.sree.swingengine.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sree.swingengine.marketdata.AngelInstrumentService;
-import com.sree.swingengine.marketdata.DailyPriceService;
-import com.sree.swingengine.marketdata.MasterStockService;
-import com.sree.swingengine.marketdata.client.angel.AngelOneClient;
-import com.sree.swingengine.marketdata.client.angel.dto.AngelInstrumentDto;
-import com.sree.swingengine.marketdata.client.angel.dto.AngelLoginResponse;
-import com.sree.swingengine.util.NetworkUtil;
+import com.sree.swingengine.market.AngelInstrumentService;
+import com.sree.swingengine.market.DailyPriceService;
+import com.sree.swingengine.market.MasterStockService;
+import com.sree.swingengine.market.indicator.IndicatorService;
+import com.sree.swingengine.market.session.AngelSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class StartupRunner implements CommandLineRunner {
@@ -21,18 +17,21 @@ public class StartupRunner implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(StartupRunner.class);
     private final MasterStockService masterStockService;
     private final ApplicationProperties applicationProperties;
-    private final AngelOneClient angelOneClient;
+    private final AngelSessionManager angelSessionManager;
     private final AngelInstrumentService angelInstrumentService;
+    private final IndicatorService indicatorService;
     public StartupRunner(ApplicationProperties applicationProperties,
                          MasterStockService masterStockService,
                          DailyPriceService dailyPriceService,
-                         AngelOneClient angelOneClient,
-                         AngelInstrumentService angelInstrumentService) {
+                         AngelSessionManager angelSessionManager,
+                         AngelInstrumentService angelInstrumentService,
+                         IndicatorService indicatorService) {
         this.applicationProperties = applicationProperties;
         this.masterStockService = masterStockService;
         this.dailyPriceService = dailyPriceService;
-        this.angelOneClient = angelOneClient;
+        this.angelSessionManager = angelSessionManager;
         this.angelInstrumentService = angelInstrumentService;
+        this.indicatorService = indicatorService;
     }
 
     @Override
@@ -48,9 +47,11 @@ public class StartupRunner implements CommandLineRunner {
             }
 
             case SMART_API_LOGIN -> {
-                AngelLoginResponse response = angelOneClient.login();
-                log.info("Status  : {}", response.getStatus());
-                log.info("Message : {}", response.getMessage());
+
+                String jwt = angelSessionManager.getJwtToken();
+
+                log.info("JWT Token generated successfully.");
+                log.info("Token starts with: {}", jwt.substring(0, 20) + "...");
             }
 
             case SYNC_SYMBOL_TOKENS -> {
@@ -64,7 +65,14 @@ public class StartupRunner implements CommandLineRunner {
 
             case LOAD_DAILY_PRICES -> {
                 log.info("Loading Daily Prices...");
-                dailyPriceService.loadDailyPrices();
+                dailyPriceService.loadDailyPrices(false);
+            }
+            case CALCULATE_INDICATORS -> {
+
+                log.info("Calculating Indicators...");
+
+                indicatorService.calculateIndicators();
+
             }
 
             case LOAD_FUNDAMENTALS -> {

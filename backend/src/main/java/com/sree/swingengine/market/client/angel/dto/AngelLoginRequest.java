@@ -1,4 +1,4 @@
-package com.sree.swingengine.marketdata.client.angel.dto;
+package com.sree.swingengine.market.client.angel.dto;
 
 import lombok.Builder;
 import lombok.Data;

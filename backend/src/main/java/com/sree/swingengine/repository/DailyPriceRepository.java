@@ -5,10 +5,13 @@ import com.sree.swingengine.entity.Stock;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface DailyPriceRepository extends JpaRepository<DailyPrice, Long> {
 
     Optional<DailyPrice> findByStockAndTradingDate(Stock stock, LocalDate tradingDate);
+    Optional<DailyPrice> findTopByStockOrderByTradingDateDesc(Stock stock);
+    List<DailyPrice> findByStockOrderByTradingDateAsc(Stock stock);
 
 }
