@@ -15,7 +15,15 @@ public class IndicatorMapper {
             DailyPrice price,
             BigDecimal ema20,
             BigDecimal ema50,
-            BigDecimal ema200) {
+            BigDecimal ema200,
+            BigDecimal rsi14,
+            BigDecimal macd,
+            BigDecimal macdSignal,
+            BigDecimal macdHistogram,
+            BigDecimal adx,
+            BigDecimal plusDi,
+            BigDecimal minusDi,
+            BigDecimal atr14) {
 
         return DailyIndicator.builder()
                 .stock(stock)
@@ -23,6 +31,14 @@ public class IndicatorMapper {
                 .ema20(ema20)
                 .ema50(ema50)
                 .ema200(ema200)
+                .rsi14(rsi14)
+                .macd(macd)
+                .macdSignal(macdSignal)
+                .macdHistogram(macdHistogram)
+                .adx(adx)
+                .plusDi(plusDi)
+                .minusDi(minusDi)
+                .atr14(atr14)
                 .build();
     }
 }

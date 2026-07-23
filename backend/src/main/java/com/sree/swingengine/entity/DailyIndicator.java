@@ -41,5 +41,26 @@ public class DailyIndicator extends BaseEntity {
     private BigDecimal ema200;
 
     @Column(precision = 10, scale = 4)
-    private BigDecimal rsi;
+    private BigDecimal rsi14;
+
+    @Column(precision = 19, scale = 4)
+    private BigDecimal macd;
+
+    @Column(precision = 19, scale = 4)
+    private BigDecimal macdSignal;
+
+    @Column(precision = 19, scale = 4)
+    private BigDecimal macdHistogram;
+
+    @Column(precision = 10, scale = 4)
+    private BigDecimal adx;
+
+    @Column(precision = 10, scale = 4)
+    private BigDecimal plusDi;
+
+    @Column(precision = 10, scale = 4)
+    private BigDecimal minusDi;
+
+    @Column(precision = 19, scale = 10)
+    private BigDecimal atr14;
 }
