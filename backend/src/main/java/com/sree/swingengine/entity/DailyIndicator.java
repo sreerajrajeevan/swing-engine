@@ -63,4 +63,19 @@ public class DailyIndicator extends BaseEntity {
 
     @Column(precision = 19, scale = 10)
     private BigDecimal atr14;
+
+    @Column(name = "bb_upper", precision = 19, scale = 10)
+    private BigDecimal bbUpper;
+
+    @Column(name = "bb_middle", precision = 19, scale = 10)
+    private BigDecimal bbMiddle;
+
+    @Column(name = "bb_lower", precision = 19, scale = 10)
+    private BigDecimal bbLower;
+
+    @Column(precision = 19, scale = 10)
+    private BigDecimal stochasticK;
+
+    @Column(precision = 19, scale = 10)
+    private BigDecimal stochasticD;
 }

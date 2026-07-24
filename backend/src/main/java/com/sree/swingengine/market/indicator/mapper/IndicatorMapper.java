@@ -23,7 +23,12 @@ public class IndicatorMapper {
             BigDecimal adx,
             BigDecimal plusDi,
             BigDecimal minusDi,
-            BigDecimal atr14) {
+            BigDecimal atr14,
+            BigDecimal bbUpper,
+            BigDecimal bbMiddle,
+            BigDecimal bbLower,
+            BigDecimal stochasticK,
+            BigDecimal stochasticD) {
 
         return DailyIndicator.builder()
                 .stock(stock)
@@ -39,6 +44,11 @@ public class IndicatorMapper {
                 .plusDi(plusDi)
                 .minusDi(minusDi)
                 .atr14(atr14)
+                .bbUpper(bbUpper)
+                .bbMiddle(bbMiddle)
+                .bbLower(bbLower)
+                .stochasticK(stochasticK)
+                .stochasticD(stochasticD)
                 .build();
     }
 }

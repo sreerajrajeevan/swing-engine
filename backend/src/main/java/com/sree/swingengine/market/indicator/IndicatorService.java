@@ -6,7 +6,9 @@ import com.sree.swingengine.entity.Stock;
 import com.sree.swingengine.market.indicator.calculator.*;
 import com.sree.swingengine.market.indicator.mapper.IndicatorMapper;
 import com.sree.swingengine.market.indicator.model.AdxResult;
+import com.sree.swingengine.market.indicator.model.BollingerBandsResult;
 import com.sree.swingengine.market.indicator.model.MacdResult;
+import com.sree.swingengine.market.indicator.model.StochasticRsiResult;
 import com.sree.swingengine.repository.DailyIndicatorRepository;
 import com.sree.swingengine.repository.DailyPriceRepository;
 import com.sree.swingengine.repository.StockRepository;
@@ -36,6 +38,8 @@ public class IndicatorService {
 
     private final IndicatorMapper indicatorMapper;
     private final AtrCalculator atrCalculator;
+    private final BollingerBandsCalculator bollingerBandsCalculator;
+    private final StochasticRsiCalculator stochasticRsiCalculator;
 
     public void calculateIndicators() {
 
@@ -111,6 +115,14 @@ public class IndicatorService {
         List<BigDecimal> rsi14 =
                 rsiCalculator.calculate(closes, 14);
 
+        StochasticRsiResult stochasticRsiResult =
+                stochasticRsiCalculator.calculate(
+                        rsi14,
+                        14,
+                        14,
+                        3,
+                        3);
+
         MacdResult macdResult =
                 macdCalculator.calculate(closes);
 
@@ -119,6 +131,9 @@ public class IndicatorService {
 
         List<BigDecimal> atr =
                 atrCalculator.calculate(prices, 14);
+
+        BollingerBandsResult bollingerBandsResult =
+                bollingerBandsCalculator.calculate(closes, 20);
 
         List<DailyIndicator> indicators = new ArrayList<>();
 
@@ -133,6 +148,11 @@ public class IndicatorService {
         log.info("+DI Last        : {}", adxResult.getPlusDi().get(adxResult.getPlusDi().size() - 1));
         log.info("-DI Last        : {}", adxResult.getMinusDi().get(adxResult.getMinusDi().size() - 1));
         log.info("ATR14 Last      : {}", atr.get(atr.size() - 1));
+        log.info("Stoch %K Last   : {}", stochasticRsiResult.getK().get(stochasticRsiResult.getK().size() - 1));
+        log.info("Stoch %D Last   : {}", stochasticRsiResult.getD().get(stochasticRsiResult.getD().size() - 1));
+        log.info("BB Upper Last   : {}", bollingerBandsResult.getUpperBand().get(bollingerBandsResult.getUpperBand().size() - 1));
+        log.info("BB Middle Last  : {}", bollingerBandsResult.getMiddleBand().get(bollingerBandsResult.getMiddleBand().size() - 1));
+        log.info("BB Lower Last   : {}", bollingerBandsResult.getLowerBand().get(bollingerBandsResult.getLowerBand().size() - 1));
 
         for (int i = 0; i < prices.size(); i++) {
 
@@ -150,7 +170,12 @@ public class IndicatorService {
                             adxResult.getAdx().get(i),
                             adxResult.getPlusDi().get(i),
                             adxResult.getMinusDi().get(i),
-                            atr.get(i)
+                            atr.get(i),
+                            bollingerBandsResult.getUpperBand().get(i),
+                            bollingerBandsResult.getMiddleBand().get(i),
+                            bollingerBandsResult.getLowerBand().get(i),
+                            stochasticRsiResult.getK().get(i),
+                            stochasticRsiResult.getD().get(i)
                     )
             );
         }
