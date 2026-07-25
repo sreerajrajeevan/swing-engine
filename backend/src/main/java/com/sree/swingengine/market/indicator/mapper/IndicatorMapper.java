@@ -3,6 +3,7 @@ package com.sree.swingengine.market.indicator.mapper;
 import com.sree.swingengine.entity.DailyIndicator;
 import com.sree.swingengine.entity.DailyPrice;
 import com.sree.swingengine.entity.Stock;
+import com.sree.swingengine.market.enums.TrendDirection;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -28,7 +29,14 @@ public class IndicatorMapper {
             BigDecimal bbMiddle,
             BigDecimal bbLower,
             BigDecimal stochasticK,
-            BigDecimal stochasticD) {
+            BigDecimal stochasticD,
+            BigDecimal supertrend,
+            TrendDirection supertrendDirection,
+            BigDecimal obv,
+            BigDecimal mfi,
+            BigDecimal volumeSma20,
+            BigDecimal relativeVolume
+    ) {
 
         return DailyIndicator.builder()
                 .stock(stock)
@@ -49,6 +57,12 @@ public class IndicatorMapper {
                 .bbLower(bbLower)
                 .stochasticK(stochasticK)
                 .stochasticD(stochasticD)
+                .supertrend(supertrend)
+                .supertrendDirection(supertrendDirection)
+                .obv(obv)
+                .mfi(mfi)
+                .volumeSma20(volumeSma20)
+                .relativeVolume(relativeVolume)
                 .build();
     }
 }

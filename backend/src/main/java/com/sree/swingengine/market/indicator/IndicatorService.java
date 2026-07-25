@@ -3,12 +3,10 @@ package com.sree.swingengine.market.indicator;
 import com.sree.swingengine.entity.DailyIndicator;
 import com.sree.swingengine.entity.DailyPrice;
 import com.sree.swingengine.entity.Stock;
+import com.sree.swingengine.market.enums.TrendDirection;
 import com.sree.swingengine.market.indicator.calculator.*;
 import com.sree.swingengine.market.indicator.mapper.IndicatorMapper;
-import com.sree.swingengine.market.indicator.model.AdxResult;
-import com.sree.swingengine.market.indicator.model.BollingerBandsResult;
-import com.sree.swingengine.market.indicator.model.MacdResult;
-import com.sree.swingengine.market.indicator.model.StochasticRsiResult;
+import com.sree.swingengine.market.indicator.model.*;
 import com.sree.swingengine.repository.DailyIndicatorRepository;
 import com.sree.swingengine.repository.DailyPriceRepository;
 import com.sree.swingengine.repository.StockRepository;
@@ -40,6 +38,11 @@ public class IndicatorService {
     private final AtrCalculator atrCalculator;
     private final BollingerBandsCalculator bollingerBandsCalculator;
     private final StochasticRsiCalculator stochasticRsiCalculator;
+    private final SupertrendCalculator supertrendCalculator;
+    private final ObvCalculator obvCalculator;
+    private final MfiCalculator mfiCalculator;
+    private final VolumeSmaCalculator volumeSmaCalculator;
+    private final RelativeVolumeCalculator relativeVolumeCalculator;
 
     public void calculateIndicators() {
 
@@ -50,6 +53,7 @@ public class IndicatorService {
         int success = 0;
         int failed = 0;
 
+        //comment below for looop to enable the run for all stocks and below one enble for only sbin
         for (int i = 0; i < stocks.size(); i++) {
 
             Stock stock = stocks.get(i);
@@ -75,6 +79,31 @@ public class IndicatorService {
                         ex);
             }
         }
+
+        //run only for sbin starts here
+//        for (int i = 0; i < stocks.size(); i++) {
+//
+//            Stock stock = stocks.get(i);
+//
+//            // Run only for SBIN
+//            if (!"SBIN".equalsIgnoreCase(stock.getSymbol())) {
+//                continue;
+//            }
+//
+//            log.info("Calculating indicators for {}", stock.getSymbol());
+//
+//            try {
+//                calculateStock(stock);
+//                success++;
+//            } catch (Exception ex) {
+//                failed++;
+//                log.error("Failed for {}", stock.getSymbol(), ex);
+//            }
+//
+//            break; // Stop after SBIN
+//        }
+
+        //sbin stops here
 
         long elapsedMillis = System.currentTimeMillis() - startTime;
 
@@ -135,6 +164,32 @@ public class IndicatorService {
         BollingerBandsResult bollingerBandsResult =
                 bollingerBandsCalculator.calculate(closes, 20);
 
+        SupertrendResult supertrendResult =
+                    supertrendCalculator.calculate(
+                            prices,
+                            14,
+                            BigDecimal.valueOf(3)
+                    );
+
+        List<BigDecimal> obv = obvCalculator.calculate(prices);
+
+        List<BigDecimal> mfi = mfiCalculator.calculate(prices, 14);
+
+        List<BigDecimal> volumeSma20 =
+                volumeSmaCalculator.calculate(prices,20);
+
+        List<BigDecimal> relativeVolume =
+                relativeVolumeCalculator.calculate(
+                        prices,
+                        volumeSma20
+                );
+
+        log.info("Supertrend calculation completed for "+stock.getCompanyName());
+        log.info("Supertrend Last : {}", supertrendResult.getSupertrend().get(supertrendResult.getSupertrend().size() - 1));
+
+        log.info("Direction Last  : {}", supertrendResult.getDirection().get(supertrendResult.getDirection().size() - 1));
+
+
         List<DailyIndicator> indicators = new ArrayList<>();
 
         log.info("EMA20 Last      : {}", ema20.get(ema20.size() - 1));
@@ -156,6 +211,11 @@ public class IndicatorService {
 
         for (int i = 0; i < prices.size(); i++) {
 
+            String direction = supertrendResult.getDirection().get(i);
+
+            TrendDirection trendDirection =
+                    direction == null ? null : TrendDirection.valueOf(direction);
+
             indicators.add(
                     indicatorMapper.toEntity(
                             stock,
@@ -175,7 +235,13 @@ public class IndicatorService {
                             bollingerBandsResult.getMiddleBand().get(i),
                             bollingerBandsResult.getLowerBand().get(i),
                             stochasticRsiResult.getK().get(i),
-                            stochasticRsiResult.getD().get(i)
+                            stochasticRsiResult.getD().get(i),
+                            supertrendResult.getSupertrend().get(i),
+                            trendDirection,
+                            obv.get(i),
+                            mfi.get(i),
+                            volumeSma20.get(i),
+                            relativeVolume.get(i)
                     )
             );
         }

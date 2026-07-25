@@ -1,5 +1,6 @@
 package com.sree.swingengine.entity;
 
+import com.sree.swingengine.market.enums.TrendDirection;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -78,4 +79,23 @@ public class DailyIndicator extends BaseEntity {
 
     @Column(precision = 19, scale = 10)
     private BigDecimal stochasticD;
+
+    @Column(name = "supertrend", precision = 19, scale = 8)
+    private BigDecimal supertrend;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "supertrend_direction")
+    private TrendDirection supertrendDirection;
+
+    @Column(name = "obv", precision = 20, scale = 0)
+    private BigDecimal obv;
+
+    @Column(name = "mfi", precision = 19, scale = 2)
+    private BigDecimal mfi;
+
+    @Column(name = "volume_sma20", precision = 19, scale = 2)
+    private BigDecimal volumeSma20;
+
+    @Column(name = "relative_volume", precision = 10, scale = 4)
+    private BigDecimal relativeVolume;
 }
