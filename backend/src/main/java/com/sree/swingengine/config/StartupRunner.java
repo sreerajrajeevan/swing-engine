@@ -1,6 +1,7 @@
 package com.sree.swingengine.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sree.swingengine.analysis.AnalysisService;
 import com.sree.swingengine.market.AngelInstrumentService;
 import com.sree.swingengine.market.DailyPriceService;
 import com.sree.swingengine.market.MasterStockService;
@@ -20,18 +21,21 @@ public class StartupRunner implements CommandLineRunner {
     private final AngelSessionManager angelSessionManager;
     private final AngelInstrumentService angelInstrumentService;
     private final IndicatorService indicatorService;
+    private final AnalysisService analysisService;
     public StartupRunner(ApplicationProperties applicationProperties,
                          MasterStockService masterStockService,
                          DailyPriceService dailyPriceService,
                          AngelSessionManager angelSessionManager,
                          AngelInstrumentService angelInstrumentService,
-                         IndicatorService indicatorService) {
+                         IndicatorService indicatorService,
+                         AnalysisService analysisService) {
         this.applicationProperties = applicationProperties;
         this.masterStockService = masterStockService;
         this.dailyPriceService = dailyPriceService;
         this.angelSessionManager = angelSessionManager;
         this.angelInstrumentService = angelInstrumentService;
         this.indicatorService = indicatorService;
+        this.analysisService = analysisService;
     }
 
     @Override
@@ -77,6 +81,13 @@ public class StartupRunner implements CommandLineRunner {
 
             case LOAD_FUNDAMENTALS -> {
                 log.info("LOAD_FUNDAMENTALS is not implemented yet.");
+            }
+            case ANALYZE_STOCKS -> {
+
+                log.info("Analyzing Stocks...");
+
+                analysisService.analyzeStocks();
+
             }
         }
     }

@@ -35,11 +35,6 @@ public class Stock extends BaseEntity {
     @Builder.Default
     private Boolean active = true;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
     @Column(name = "symbol_token")
     private String symbolToken;
 }
