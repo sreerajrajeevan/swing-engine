@@ -1,7 +1,9 @@
 package com.sree.swingengine.analysis.model;
 
 import com.sree.swingengine.analysis.momentum.MomentumAnalysisResult;
+import com.sree.swingengine.analysis.overall.OverallScoreResult;
 import com.sree.swingengine.analysis.trend.TrendAnalysisResult;
+import com.sree.swingengine.analysis.volume.VolumeAnalysisResult;
 import com.sree.swingengine.entity.Stock;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,5 +21,9 @@ public class StockAnalysisResult {
     private TrendAnalysisResult trend;
 
     private MomentumAnalysisResult momentum;
+
+    private VolumeAnalysisResult volume;
+
+    private OverallScoreResult overall;
 
 }

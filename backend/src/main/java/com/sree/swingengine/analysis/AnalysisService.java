@@ -3,8 +3,11 @@ package com.sree.swingengine.analysis;
 import com.sree.swingengine.analysis.common.AnalysisContext;
 import com.sree.swingengine.analysis.momentum.MomentumAnalyzer;
 import com.sree.swingengine.analysis.model.StockAnalysisResult;
+import com.sree.swingengine.analysis.overall.OverallScoreCalculator;
+import com.sree.swingengine.analysis.overall.OverallScoreResult;
 import com.sree.swingengine.analysis.trend.TrendAnalysisResult;
 import com.sree.swingengine.analysis.trend.TrendAnalyzer;
+import com.sree.swingengine.analysis.volume.VolumeAnalyzer;
 import com.sree.swingengine.entity.Stock;
 import com.sree.swingengine.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,8 @@ public class AnalysisService {
     private final AnalysisContextFactory contextFactory;
     private final TrendAnalyzer trendAnalyzer;
     private final MomentumAnalyzer momentumAnalyzer;
+    private final VolumeAnalyzer volumeAnalyzer;
+    private final OverallScoreCalculator overallScoreCalculator;
 
     public void analyzeStocks() {
 
@@ -54,6 +59,8 @@ public class AnalysisService {
                                     .stock(stock)
                                     .trend(trend)
                                     .momentum(analysis.getMomentum())
+                                    .volume(analysis.getVolume())
+                                    .overall(analysis.getOverall())
                                     .build()
                     );
                 }
@@ -79,10 +86,17 @@ public class AnalysisService {
 
         AnalysisContext context = contextFactory.build(stock);
 
+        TrendAnalysisResult trend = trendAnalyzer.analyze(context);
+        var momentum = momentumAnalyzer.analyze(context);
+        var volume = volumeAnalyzer.analyze(context);
+        OverallScoreResult overall = overallScoreCalculator.calculate(trend, momentum, volume);
+
         return StockAnalysisResult.builder()
                 .stock(stock)
-                .trend(trendAnalyzer.analyze(context))
-                .momentum(momentumAnalyzer.analyze(context))
+                .trend(trend)
+                .momentum(momentum)
+                .volume(volume)
+                .overall(overall)
                 .build();
     }
 
@@ -96,7 +110,7 @@ public class AnalysisService {
 
         log.info("");
         log.info("==============================================================");
-        log.info("           SWING ENGINE - TREND & MOMENTUM ANALYSIS");
+        log.info("       SWING ENGINE - TREND, MOMENTUM & VOLUME ANALYSIS");
         log.info("==============================================================");
         log.info("");
 
@@ -106,13 +120,13 @@ public class AnalysisService {
 
         } else {
 
-            log.info(String.format("%-5s %-20s %-8s %-15s %-10s %-15s",
+            log.info(String.format("%-5s %-18s %-7s %-14s %-10s %-14s %-8s %-14s %-14s",
                     "Rank",
                     "Symbol",
                     "Trend",
                     "Trend Strength",
                     "Momentum",
-                    "Momentum Strength"));
+                    "Momentum Strength", "Volume", "Volume Strength", "Overall (pre-risk)"));
 
             log.info("--------------------------------------------------------------");
 
@@ -120,13 +134,14 @@ public class AnalysisService {
 
             for (StockAnalysisResult result : shortlisted) {
 
-                log.info(String.format("%-5d %-20s %-8d %-15s %-10d %-15s",
+                log.info(String.format("%-5d %-18s %-7d %-14s %-10d %-14s %-8d %-14s %-14.2f",
                         rank++,
                         result.getStock().getSymbol(),
                         result.getTrend().getScore(),
                         result.getTrend().getStrength(),
                         result.getMomentum().getScore(),
-                        result.getMomentum().getStrength()));
+                        result.getMomentum().getStrength(), result.getVolume().getScore(), result.getVolume().getStrength(),
+                        result.getOverall().getProvisionalScore()));
 
                 result.getTrend().getScoreBreakdown()
                         .forEach((key, value) ->
@@ -135,6 +150,9 @@ public class AnalysisService {
                 result.getMomentum().getScoreBreakdown()
                         .forEach((key, value) ->
                                 log.info("      Momentum - {} : {}", key, value));
+
+                result.getVolume().getScoreBreakdown()
+                        .forEach((key, value) -> log.info("      Volume - {} : {}", key, value));
 
                 log.info("");
             }
