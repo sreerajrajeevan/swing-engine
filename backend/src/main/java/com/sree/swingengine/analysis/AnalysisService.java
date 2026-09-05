@@ -1,6 +1,7 @@
 package com.sree.swingengine.analysis;
 
 import com.sree.swingengine.analysis.common.AnalysisContext;
+import com.sree.swingengine.analysis.momentum.MomentumAnalyzer;
 import com.sree.swingengine.analysis.model.StockAnalysisResult;
 import com.sree.swingengine.analysis.trend.TrendAnalysisResult;
 import com.sree.swingengine.analysis.trend.TrendAnalyzer;
@@ -24,6 +25,7 @@ public class AnalysisService {
     private final StockRepository stockRepository;
     private final AnalysisContextFactory contextFactory;
     private final TrendAnalyzer trendAnalyzer;
+    private final MomentumAnalyzer momentumAnalyzer;
 
     public void analyzeStocks() {
 
@@ -40,7 +42,8 @@ public class AnalysisService {
 
             try {
 
-                TrendAnalysisResult trend = analyze(stock);
+                StockAnalysisResult analysis = analyze(stock);
+                TrendAnalysisResult trend = analysis.getTrend();
 
                 success++;
 
@@ -50,6 +53,7 @@ public class AnalysisService {
                             StockAnalysisResult.builder()
                                     .stock(stock)
                                     .trend(trend)
+                                    .momentum(analysis.getMomentum())
                                     .build()
                     );
                 }
@@ -71,11 +75,15 @@ public class AnalysisService {
         printSummary(shortlisted, stocks.size(), success, failed, start);
     }
 
-    private TrendAnalysisResult analyze(Stock stock) {
+    private StockAnalysisResult analyze(Stock stock) {
 
         AnalysisContext context = contextFactory.build(stock);
 
-        return trendAnalyzer.analyze(context);
+        return StockAnalysisResult.builder()
+                .stock(stock)
+                .trend(trendAnalyzer.analyze(context))
+                .momentum(momentumAnalyzer.analyze(context))
+                .build();
     }
 
     private void printSummary(List<StockAnalysisResult> shortlisted,
@@ -88,7 +96,7 @@ public class AnalysisService {
 
         log.info("");
         log.info("==============================================================");
-        log.info("               SWING ENGINE - TREND ANALYSIS");
+        log.info("           SWING ENGINE - TREND & MOMENTUM ANALYSIS");
         log.info("==============================================================");
         log.info("");
 
@@ -98,11 +106,13 @@ public class AnalysisService {
 
         } else {
 
-            log.info(String.format("%-5s %-20s %-8s %-15s",
+            log.info(String.format("%-5s %-20s %-8s %-15s %-10s %-15s",
                     "Rank",
                     "Symbol",
-                    "Score",
-                    "Strength"));
+                    "Trend",
+                    "Trend Strength",
+                    "Momentum",
+                    "Momentum Strength"));
 
             log.info("--------------------------------------------------------------");
 
@@ -110,15 +120,21 @@ public class AnalysisService {
 
             for (StockAnalysisResult result : shortlisted) {
 
-                log.info(String.format("%-5d %-20s %-8d %-15s",
+                log.info(String.format("%-5d %-20s %-8d %-15s %-10d %-15s",
                         rank++,
                         result.getStock().getSymbol(),
                         result.getTrend().getScore(),
-                        result.getTrend().getStrength()));
+                        result.getTrend().getStrength(),
+                        result.getMomentum().getScore(),
+                        result.getMomentum().getStrength()));
 
                 result.getTrend().getScoreBreakdown()
                         .forEach((key, value) ->
-                                log.info("      {} : {}", key, value));
+                                log.info("      Trend - {} : {}", key, value));
+
+                result.getMomentum().getScoreBreakdown()
+                        .forEach((key, value) ->
+                                log.info("      Momentum - {} : {}", key, value));
 
                 log.info("");
             }
